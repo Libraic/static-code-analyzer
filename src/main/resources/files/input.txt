@@ -1,0 +1,3 @@
+java.util.Integer a = (4 / 2) + (3 * 2) - (3 + 9);
+b = 2 + c;
+String myString = "Victor";
