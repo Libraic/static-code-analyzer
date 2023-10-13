@@ -14,7 +14,8 @@ public enum TokenPattern {
     ARITHMETIC_OPERATOR_PATTERN("^\\+{1,2}|\\-{1,2}|\\/|\\*$"),
     ASSIGNMENT_OPERATOR_PATTERN("^={1}$"),
     DATA_TYPE_PATTERN(""),
-    VARIABLE_NAME_PATTERN("^.*$");
+    VARIABLE_NAME_PATTERN("^[a-zA-Z_$][\\w$]*$"),
+    SEMICOLON_PATTERN("^;{1}$");
 
     private final String regex;
 }
