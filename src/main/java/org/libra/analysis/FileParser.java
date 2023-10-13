@@ -1,9 +1,8 @@
-package org.libra;
+package org.libra.analysis;
 
 import lombok.AllArgsConstructor;
-import org.libra.analysis.Lexer;
 import org.libra.exception.ExceptionGenerator;
-import org.libra.model.Token;
+import org.libra.model.token.Token;
 import org.libra.utils.Constants;
 
 import java.io.BufferedReader;
@@ -24,8 +23,22 @@ public class FileParser {
     private final Lexer lexer;
 
     /**
-     * The method take the input file and reads it line by line.
+     * The method takes the input file and reads it character by character.
+     * The input file represents the source code file.
+     * While reading, it converts each sequence of characters into a keyword.
+     * For example, if the parsing algorithm find a sequence of digits, it converts it to a number keyword.
      * <br><br>
+     * <ul>
+     *     <li><strong>>12, 3.14159, -14</strong> - Number keywords</li>
+     *     <li><strong>"Java", "Static Code Analyzer"</strong> - String keywords</li>
+     *     <li><strong>;</strong> - Semicolon keyword</strong></li>
+     *     <li><strong>java.lang.Integer, int, DeclaredDataType</strong> - Data Type keywords</li>
+     *     <li><strong>=</strong> - Assignment keyword</li>
+     *     <li><strong>+, -, /, *</strong> - Arithmetic keywords</li>
+     *     <li><strong>(, )</strong> - Open/Closed Parenthesis keywords</li>
+     *     <li><strong>[, ]</strong> - Open/Closed Brackets keywords</li>
+     *     <li><strong>{, }</strong> - Open/Closed Braces keywords</li>
+     * </ul>
      * @param fileName the input file name.
      */
     public List<Token> parseFile(String fileName) {
@@ -49,7 +62,8 @@ public class FileParser {
                     keyword.delete(0, keyword.length());
                 }
 
-                if (character == SEMICOLON) {
+                if (isSemicolon(character)) {
+                    keywords.add(Character.toString(character));
                     tokens.addAll(lexer.tokenize(keywords));
                     keywords = new ArrayList<>();
                     continue;
@@ -70,7 +84,8 @@ public class FileParser {
         }
 
         char lastCharacterFromKeyword = keyword.charAt(keyword.length() - 1);
-        return isSpaceOrSemicolon(character) ||
+        return isSpace(character) ||
+            isSemicolon(character) ||
             isAssignmentOperator(character) ||
             isAssignmentOperator(lastCharacterFromKeyword) ||
             isArithmeticOperator(character) ||
@@ -90,12 +105,16 @@ public class FileParser {
         return character == ASSIGNMENT_OPERATOR;
     }
 
-    private boolean isSpaceOrSemicolon(char character) {
-        return character == SPACE || character == SEMICOLON;
+    private boolean isSpace(char character) {
+        return character == SPACE;
+    }
+
+    private boolean isSemicolon(char character) {
+        return character == SEMICOLON;
     }
 
     private boolean isParenthesis(char character) {
-        return character == OPEN_PARENTHESIS || character == CLOSED_PARENTHESIS;
+        return character == Constants.OPEN_PARENTHESIS_CHARACTER || character == CLOSED_PARENTHESIS;
     }
 
     private boolean isNewLineOrCarriageReturn(char character) {

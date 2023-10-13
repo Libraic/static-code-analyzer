@@ -1,8 +1,10 @@
 package org.libra;
 
 import lombok.var;
+import org.libra.analysis.FileParser;
 import org.libra.analysis.Lexer;
-import org.libra.model.Token;
+import org.libra.analysis.Parser;
+import org.libra.model.token.Token;
 import java.util.List;
 
 import static org.libra.utils.Constants.FILES_RELATIVE_PATH;
@@ -14,10 +16,8 @@ public class Main {
         Lexer lexer = new Lexer();
         FileParser fileParser = new FileParser(lexer);
         List<Token> tokens = fileParser.parseFile(filePath);
-        for (var token : tokens) {
-            System.out.println("--------------------------------------------");
-            System.out.println(token);
-            System.out.println("--------------------------------------------\n");
-        }
+        Parser parser = new Parser();
+        var t = parser.parse(tokens);
+        t.stringify(0);
     }
 }

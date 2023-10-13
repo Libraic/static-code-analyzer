@@ -1,4 +1,4 @@
-package org.libra.model;
+package org.libra.model.token;
 
 /**
  * A specific token type affiliated to each individual token.
@@ -11,5 +11,8 @@ public enum TokenType {
     DATA_TYPE,
     VARIABLE_NAME,
     OPEN_PARENTHESIS,
-    CLOSED_PARENTHESIS
+    CLOSED_PARENTHESIS,
+    SEMICOLON,
+    PROGRAM,
+    INSTRUCTION
 }
