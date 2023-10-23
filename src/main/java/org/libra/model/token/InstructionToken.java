@@ -1,14 +1,12 @@
 package org.libra.model.token;
 
+import org.libra.model.ParsingContext;
 import org.libra.model.node.BinaryExpressionNode;
 import org.libra.model.node.Node;
 import org.libra.model.node.UnaryNode;
 
-import java.util.Stack;
-
 import static org.libra.model.token.TokenType.CLOSED_PARENTHESIS;
 import static org.libra.model.token.TokenType.OPEN_PARENTHESIS;
-import static org.libra.utils.Constants.ASSIGNMENT_LITERAL;
 import static org.libra.utils.Constants.CLOSED_PARENTHESIS_LITERAL;
 import static org.libra.utils.Constants.DIVISION_OPERATOR_LITERAL;
 import static org.libra.utils.Constants.MINUS_OPERATOR_LITERAL;
@@ -23,12 +21,13 @@ public class InstructionToken extends Token {
     }
 
     @Override
-    public void produceNode(Stack<Node> nodes) {
-        int start = findAssignmentNodeIndex(nodes);
-        handleMultiplicationAndAddition(nodes, start);
+    public void produceNode(ParsingContext parsingContext) {
+        int start = parsingContext.findAssignmentNodeIndex();
+        handleMultiplicationAndAddition(parsingContext, start);
 
         Node currentNode = new UnaryNode(this);
-        for (Node node : nodes) {
+        for (int i = 0; i < parsingContext.getNumberOfNodes(); ++i) {
+            Node node = parsingContext.getNodeAt(i);
             if (isParenthesis(node.getToken().getTokenType())) {
                 continue;
             }
@@ -37,65 +36,65 @@ public class InstructionToken extends Token {
         }
     }
 
-    private void handleMultiplicationAndAddition(Stack<Node> nodes, int start) {
-        handleMultiplications(nodes, start);
-        handleAdditions(nodes, start);
+    private void handleMultiplicationAndAddition(ParsingContext parsingContext, int start) {
+        handleMultiplications(parsingContext, start);
+        handleAdditions(parsingContext, start);
     }
 
-    private void handleMultiplications(Stack<Node> nodes, int start) {
-        for (int i = start; i < nodes.size(); ++i) {
-            Node currentNode = nodes.get(i);
+    private void handleMultiplications(ParsingContext parsingContext, int start) {
+        for (int i = start; i < parsingContext.getNumberOfNodes(); ++i) {
+            Node currentNode = parsingContext.getNodeAt(i);
             if (currentNode.getToken().getValue().equals(OPEN_PARENTHESIS_LITERAL)) {
                 return;
             }
 
             if (currentNode.getToken().getValue().equals(CLOSED_PARENTHESIS_LITERAL)) {
-                handleMultiplicationAndAddition(nodes, i + 1);
-                nodes.remove(currentNode);
+                handleMultiplicationAndAddition(parsingContext, i + 1);
+                parsingContext.removeNode(currentNode);
             } else if (isCurrentNodeMultiplicationOrDivision(currentNode.getToken().getValue()) &&
-                    isBinaryExpressionUnassigned(currentNode)
+                isBinaryExpressionUnassigned(currentNode)
             ) {
-                handleArithmeticOperations(nodes, i);
+                handleArithmeticOperations(parsingContext, i);
                 --i;
             }
         }
     }
 
-    private void handleAdditions(Stack<Node> nodes, int start) {
-        for (int i = start; i < nodes.size(); ++i) {
-            Node currentNode = nodes.get(i);
+    private void handleAdditions(ParsingContext parsingContext, int start) {
+        for (int i = start; i < parsingContext.getNumberOfNodes(); ++i) {
+            Node currentNode = parsingContext.getNodeAt(i);
             if (currentNode.getToken().getValue().equals(CLOSED_PARENTHESIS_LITERAL)) {
-                nodes.remove(currentNode);
+                parsingContext.removeNode(currentNode);
                 return;
             }
 
             if (currentNode.getToken().getValue().equals(OPEN_PARENTHESIS_LITERAL)) {
-                handleMultiplicationAndAddition(nodes, i + 1);
+                handleMultiplicationAndAddition(parsingContext, i + 1);
             } else if (isCurrentNodeAdditionOrSubtraction(currentNode.getToken().getValue()) &&
                 isBinaryExpressionUnassigned(currentNode)
             ) {
-                handleArithmeticOperations(nodes, i);
+                handleArithmeticOperations(parsingContext, i);
                 --i;
             }
         }
     }
 
-    private void handleArithmeticOperations(Stack<Node> nodes, int index) {
-        if (index == nodes.size() - 1) {
+    private void handleArithmeticOperations(ParsingContext parsingContext, int index) {
+        if (index == parsingContext.getNumberOfNodes() - 1) {
             return;
         }
 
-        Node currentNode = nodes.get(index);
-        if (nodes.get(index + 1).getToken().getValue().equals(OPEN_PARENTHESIS_LITERAL)) {
-            handleMultiplicationAndAddition(nodes, index + 1);
+        Node currentNode = parsingContext.getNodeAt(index);
+        if (parsingContext.getNodeAt(index + 1).getToken().getValue().equals(OPEN_PARENTHESIS_LITERAL)) {
+            handleMultiplicationAndAddition(parsingContext, index + 1);
         }
 
-        Node previousNode = nodes.get(index - 1);
-        Node nextNode = nodes.get(index + 1);
+        Node previousNode = parsingContext.getNodeAt(index - 1);
+        Node nextNode = parsingContext.getNodeAt(index + 1);
         currentNode.addNode(previousNode);
         currentNode.addNode(nextNode);
-        nodes.remove(previousNode);
-        nodes.remove(nextNode);
+        parsingContext.removeNode(previousNode);
+        parsingContext.removeNode(nextNode);
     }
 
     private boolean isCurrentNodeMultiplicationOrDivision(Object value) {
@@ -115,15 +114,5 @@ public class InstructionToken extends Token {
     private boolean isBinaryExpressionUnassigned(Node node) {
         return ((BinaryExpressionNode) node).getLeftHandOperand() == null &&
             ((BinaryExpressionNode) node).getRightHandOperand() == null;
-    }
-
-    private int findAssignmentNodeIndex(Stack<Node> nodes) {
-        for (int i = 0; i < nodes.size(); ++i) {
-            if (nodes.get(i).getToken().getValue().equals(ASSIGNMENT_LITERAL)) {
-                return i;
-            }
-        }
-
-        return -1;
     }
 }

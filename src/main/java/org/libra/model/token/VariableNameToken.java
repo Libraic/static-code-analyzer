@@ -1,9 +1,8 @@
 package org.libra.model.token;
 
+import org.libra.model.ParsingContext;
 import org.libra.model.node.Node;
 import org.libra.model.node.UnaryNode;
-
-import java.util.Stack;
 
 public class VariableNameToken extends Token {
 
@@ -12,12 +11,13 @@ public class VariableNameToken extends Token {
     }
 
     @Override
-    public void produceNode(Stack<Node> nodes) {
+    public void produceNode(ParsingContext parsingContext) {
         Node variableNode = new UnaryNode(this);
-        if (!nodes.empty()) {
-            variableNode.addNode(nodes.pop());
+        if (!parsingContext.isAssignmentNodePresent()) {
+            Node previousNode = parsingContext.retrieveAndRemoveLastNode();
+            variableNode.addNode(previousNode);
         }
 
-        nodes.push(variableNode);
+        parsingContext.addNode(variableNode);
     }
 }

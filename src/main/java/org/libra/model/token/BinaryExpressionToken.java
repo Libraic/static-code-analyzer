@@ -1,9 +1,8 @@
 package org.libra.model.token;
 
+import org.libra.model.ParsingContext;
 import org.libra.model.node.BinaryExpressionNode;
 import org.libra.model.node.Node;
-
-import java.util.Stack;
 
 import static org.libra.model.token.TokenType.CLOSED_PARENTHESIS;
 import static org.libra.model.token.TokenType.OPEN_PARENTHESIS;
@@ -15,21 +14,21 @@ public class BinaryExpressionToken extends Token {
     }
 
     @Override
-    public void produceNode(Stack<Node> nodes) {
+    public void produceNode(ParsingContext parsingContext) {
         if (tokenType.equals(TokenType.ASSIGNMENT_OPERATOR)) {
             Node binaryExpressionNode = new BinaryExpressionNode(this);
-            Node previousNode = nodes.pop();
+            Node previousNode = parsingContext.retrieveAndRemoveLastNode();
             while (isParenthesis(previousNode.getToken().getTokenType())) {
-                previousNode = nodes.pop();
+                previousNode = parsingContext.retrieveAndRemoveLastNode();
             }
 
             binaryExpressionNode.addNode(previousNode);
-            nodes.push(binaryExpressionNode);
+            parsingContext.addNode(binaryExpressionNode);
             return;
         }
 
         Node binaryExpressionNode = new BinaryExpressionNode(this);
-        nodes.push(binaryExpressionNode);
+        parsingContext.addNode(binaryExpressionNode);
     }
 
     private boolean isParenthesis(TokenType tokenType) {

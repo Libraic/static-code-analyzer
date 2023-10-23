@@ -1,9 +1,8 @@
 package org.libra.model.token;
 
+import org.libra.model.ParsingContext;
 import org.libra.model.node.Node;
 import org.libra.model.node.UnaryNode;
-
-import java.util.Stack;
 
 public class DataTypeToken extends Token {
 
@@ -12,8 +11,8 @@ public class DataTypeToken extends Token {
     }
 
     @Override
-    public void produceNode(Stack<Node> nodes) {
+    public void produceNode(ParsingContext parsingContext) {
         Node programNode = new UnaryNode(this);
-        nodes.push(programNode);
+        parsingContext.addNode(programNode);
     }
 }
