@@ -1,6 +1,7 @@
 package org.libra.model.token;
 
 import lombok.Getter;
+import org.libra.model.ParsingContext;
 import org.libra.model.node.Node;
 import java.util.Stack;
 
@@ -27,5 +28,5 @@ public abstract class Token {
             value;
     }
 
-    public abstract void produceNode(Stack<Node> nodes);
+    public abstract void produceNode(ParsingContext parsingContext);
 }

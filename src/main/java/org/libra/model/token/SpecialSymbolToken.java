@@ -1,9 +1,7 @@
 package org.libra.model.token;
 
-import org.libra.model.node.Node;
+import org.libra.model.ParsingContext;
 import org.libra.model.node.UnaryNode;
-
-import java.util.Stack;
 
 public class SpecialSymbolToken extends Token {
 
@@ -12,8 +10,8 @@ public class SpecialSymbolToken extends Token {
     }
 
     @Override
-    public void produceNode(Stack<Node> nodes) {
+    public void produceNode(ParsingContext parsingContext) {
         UnaryNode constantNode = new UnaryNode(this);
-        nodes.push(constantNode);
+        parsingContext.addNode(constantNode);
     }
 }
