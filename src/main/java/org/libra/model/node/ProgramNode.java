@@ -28,8 +28,12 @@ public class ProgramNode extends Node {
     public void stringify(int spacing) {
         printStringLiteralWithColor(GREEN, token.toString());
         printStringLiteralWithColor(GREEN, PROGRAM_BODY_KEYWORD + JSON_OBJECT_START);
-        for (Node node : nodes) {
-            node.stringify(spacing + 1);
+        for (int i = 0; i < nodes.size(); ++i) {
+            Node node = nodes.get(i);
+            printStringLiteralWithColor(GREEN, "\tInstruction " + (i + 1) + ": {");
+            node.stringify(spacing + 2);
+            printStringLiteralWithColor(GREEN, "\t}");
+            System.out.println();
         }
         printStringLiteralWithColor(GREEN, JSON_OBJECT_END);
     }

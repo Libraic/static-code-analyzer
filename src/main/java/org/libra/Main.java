@@ -17,7 +17,7 @@ public class Main {
         FileParser fileParser = new FileParser(lexer);
         List<Token> tokens = fileParser.parseFile(filePath);
         Parser parser = new Parser();
-        var t = parser.parse(tokens);
-        t.stringify(0);
+        var abstractSyntaxTree = parser.parse(tokens);
+        abstractSyntaxTree.stringify(0);
     }
 }

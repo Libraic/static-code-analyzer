@@ -2,6 +2,7 @@ package org.libra.model;
 
 import org.libra.model.node.Node;
 
+import java.util.Iterator;
 import java.util.Stack;
 
 import static org.libra.model.token.TokenType.ASSIGNMENT_OPERATOR;
@@ -19,12 +20,12 @@ public class ParsingContext {
         return nodes.pop();
     }
 
-    public Node retrieveLastNode() {
-        return nodes.peek();
-    }
-
     public void addNode(Node node) {
         nodes.push(node);
+    }
+
+    public Iterator<Node> getNodesIterator() {
+        return nodes.iterator();
     }
 
     public int findAssignmentNodeIndex() {
