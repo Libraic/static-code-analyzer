@@ -27,11 +27,14 @@ public class Lexer {
      */
     public List<Token> tokenize(List<String> keywords) {
         List<Token> tokens = new ArrayList<>();
-        tokens.add(tokenFactory.createProgramToken());
-        int startingIndex = tokenFactory.handleAssignmentInstructionsIfPresent(keywords, tokens);
-        for (int i = startingIndex; i < keywords.size(); ++i) {
+        Token programToken = tokenFactory.createProgramToken();
+        if (programToken != null) {
+            tokens.add(programToken);
+        }
+
+        for (int i = 0; i < keywords.size(); ++i) {
             String keyword = keywords.get(i);
-            Token token = tokenFactory.produceToken(keyword);
+            Token token = tokenFactory.produceToken(keyword, i);
             tokens.add(token);
         }
 
