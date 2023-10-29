@@ -45,12 +45,12 @@ public class InstructionToken extends Token {
         for (int i = start; i < parsingContext.getNumberOfNodes(); ++i) {
             Node currentNode = parsingContext.getNodeAt(i);
             if (currentNode.getToken().getValue().equals(OPEN_PARENTHESIS_LITERAL)) {
-                return;
+                handleMultiplicationAndAddition(parsingContext, i + 1);
+                parsingContext.removeNode(currentNode);
             }
 
             if (currentNode.getToken().getValue().equals(CLOSED_PARENTHESIS_LITERAL)) {
-                handleMultiplicationAndAddition(parsingContext, i + 1);
-                parsingContext.removeNode(currentNode);
+                return;
             } else if (isCurrentNodeMultiplicationOrDivision(currentNode.getToken().getValue()) &&
                 isBinaryExpressionUnassigned(currentNode)
             ) {
@@ -86,6 +86,7 @@ public class InstructionToken extends Token {
 
         Node currentNode = parsingContext.getNodeAt(index);
         if (parsingContext.getNodeAt(index + 1).getToken().getValue().equals(OPEN_PARENTHESIS_LITERAL)) {
+            parsingContext.removeNode(parsingContext.getNodeAt(index + 1));
             handleMultiplicationAndAddition(parsingContext, index + 1);
         }
 
