@@ -5,7 +5,6 @@ import lombok.Getter;
 import org.libra.model.Color;
 import org.libra.model.token.Token;
 
-import static org.libra.model.Color.PURPLE;
 import static org.libra.model.Color.RESET;
 import static org.libra.utils.Constants.NEW_LINE_DELIMITER;
 
