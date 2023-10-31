@@ -15,7 +15,10 @@ public enum TokenPattern {
     ASSIGNMENT_OPERATOR_PATTERN("^={1}$"),
     DATA_TYPE_PATTERN(""),
     VARIABLE_NAME_PATTERN("^[a-zA-Z_$][\\w$]*$"),
-    SEMICOLON_PATTERN("^;{1}$");
+    SEMICOLON_PATTERN("^;{1}$"),
+    ACCESS_MODIFIER_PATTERN("^public|private|protected$"),
+    STATIC_ACCESS_PATTERN("^static$"),
+    PARENTHESIS_PATTERN("^(\\(|\\)|\\{|\\})$");
 
     private final String regex;
 }

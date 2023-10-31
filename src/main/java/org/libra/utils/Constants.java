@@ -18,6 +18,7 @@ public class Constants {
     public static final char CLOSED_PARENTHESIS = ')';
     public static final char NEW_LINE = '\n';
     public static final char CARRIAGE_RETURN = '\r';
+    public static final char OPEN_CURLY_BRACE = '{';
 
     /**
      * <em><strong>String</strong></em> data type constants.
@@ -40,6 +41,8 @@ public class Constants {
     public static final String MINUS_OPERATOR_LITERAL = "-";
     public static final String MULTIPLICATION_OPERATOR_LITERAL = "*";
     public static final String DIVISION_OPERATOR_LITERAL = "/";
+    public static final String SEMICOLON_LITERAL = ";";
+    public static final String CURLY_BRACE_LITERAL = "{";
 
     /**
      * <em><strong>int</strong></em> data type constants.
@@ -47,7 +50,5 @@ public class Constants {
     public static final int FIRST_ELEMENT = 0;
     public static final int SECOND_ELEMENT = 1;
     public static final int THIRD_ELEMENT = 2;
-    public static final int ZERO_STARTING_INDEX = 0;
-    public static final int SECOND_STARTING_INDEX = 2;
-    public static final int THIRD_STARTING_INDEX = 3;
+    public static final int FOURTH_ELEMENT = 3;
 }

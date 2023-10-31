@@ -2,3 +2,5 @@ int a = (2 * ((3 + 4) * 5)) - 2;
 int b = (2 + 3) * (2 + 5) * (2 - 9);
 int c = x + y + 5;
 int d = x + 2 * y;
+
+public static void main(String args) { }
