@@ -2,11 +2,13 @@ package org.libra.analysis;
 
 import lombok.AllArgsConstructor;
 import org.libra.exception.ExceptionGenerator;
+import org.libra.exception.StaticCodeAnalyzerException;
 import org.libra.model.token.Token;
 import org.libra.utils.Constants;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +64,7 @@ public class FileParser {
                     keyword.delete(0, keyword.length());
                 }
 
-                if (isSemicolon(character)) {
+                if (isSemicolon(character) || isCurlyBrace(character)) {
                     keywords.add(Character.toString(character));
                     tokens.addAll(lexer.tokenize(keywords));
                     keywords = new ArrayList<>();
@@ -71,7 +73,9 @@ public class FileParser {
 
                 appendCharacterToKeyword(character, keyword);
             }
-        } catch (Exception e) {
+        } catch (StaticCodeAnalyzerException e) {
+            throw ExceptionGenerator.of(e.getExceptionType());
+        } catch (IOException e) {
             throw ExceptionGenerator.of(FILE_PROCESSING_EXCEPTION);
         }
 
@@ -111,6 +115,10 @@ public class FileParser {
 
     private boolean isSemicolon(char character) {
         return character == SEMICOLON;
+    }
+
+    private boolean isCurlyBrace(char character) {
+        return character == OPEN_CURLY_BRACE;
     }
 
     private boolean isParenthesis(char character) {

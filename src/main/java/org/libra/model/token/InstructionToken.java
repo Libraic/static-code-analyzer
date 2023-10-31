@@ -7,9 +7,9 @@ import org.libra.service.ArithmeticService;
 
 import java.util.Iterator;
 
-import static org.libra.model.token.TokenType.CLOSED_PARENTHESIS;
-import static org.libra.model.token.TokenType.OPEN_PARENTHESIS;
 import static org.libra.model.token.TokenType.PROGRAM;
+import static org.libra.utils.Constants.CLOSED_PARENTHESIS_LITERAL;
+import static org.libra.utils.Constants.OPEN_PARENTHESIS_LITERAL;
 
 public class InstructionToken extends Token {
 
@@ -40,8 +40,8 @@ public class InstructionToken extends Token {
         }
     }
 
-    private boolean isParenthesis(TokenType tokenType) {
-        return tokenType.equals(OPEN_PARENTHESIS) ||
-            tokenType.equals(CLOSED_PARENTHESIS);
+    private boolean isParenthesis(Object value) {
+        return value.equals(OPEN_PARENTHESIS_LITERAL) ||
+            value.equals(CLOSED_PARENTHESIS_LITERAL);
     }
 }

@@ -5,7 +5,13 @@ package org.libra.exception;
  */
 public final class StaticCodeAnalyzerException extends RuntimeException {
 
-    public StaticCodeAnalyzerException(String message) {
-        super(message);
+    private final ExceptionType exceptionType;
+
+    public StaticCodeAnalyzerException(ExceptionType exceptionType) {
+        this.exceptionType = exceptionType;
+    }
+
+    public ExceptionType getExceptionType() {
+        return exceptionType;
     }
 }

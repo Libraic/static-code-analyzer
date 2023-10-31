@@ -4,9 +4,9 @@ import org.libra.model.ParsingContext;
 import org.libra.model.node.Node;
 import org.libra.model.node.UnaryNode;
 
-public class VariableNameToken extends Token {
+public class EntityNameToken extends Token {
 
-    public VariableNameToken(TokenType tokenType, Object value) {
+    public EntityNameToken(TokenType tokenType, Object value) {
         super(tokenType, value);
     }
 
