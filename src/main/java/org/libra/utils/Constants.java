@@ -19,6 +19,7 @@ public class Constants {
     public static final char NEW_LINE = '\n';
     public static final char CARRIAGE_RETURN = '\r';
     public static final char OPEN_CURLY_BRACE = '{';
+    public static final char COMMA = ',';
 
     /**
      * <em><strong>String</strong></em> data type constants.
@@ -32,6 +33,8 @@ public class Constants {
     public static final String NEW_LINE_DELIMITER = "\n";
     public static final String PROGRAM_BODY_KEYWORD = "Program Body";
     public static final String INSTRUCTION_BODY_KEYWORD = "Instruction Body";
+    public static final String INSTRUCTION_LITERAL = "\tInstruction ";
+    public static final String SUBPROGRAM_LITERAL = "\tSubprogram ";
     public static final String DATA_TYPE_KEYWORD = "Data Type";
     public static final String JSON_OBJECT_START = ": {";
     public static final String JSON_OBJECT_END = "}";
@@ -42,7 +45,8 @@ public class Constants {
     public static final String MULTIPLICATION_OPERATOR_LITERAL = "*";
     public static final String DIVISION_OPERATOR_LITERAL = "/";
     public static final String SEMICOLON_LITERAL = ";";
-    public static final String CURLY_BRACE_LITERAL = "{";
+    public static final String OPEN_CURLY_BRACE_LITERAL = "{";
+    public static final String COMMA_LITERAL = ",";
 
     /**
      * <em><strong>int</strong></em> data type constants.

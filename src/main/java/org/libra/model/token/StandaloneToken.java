@@ -4,9 +4,9 @@ import org.libra.model.ParsingContext;
 import org.libra.model.node.Node;
 import org.libra.model.node.UnaryNode;
 
-public class ConstantToken extends Token{
+public class StandaloneToken extends Token{
 
-    public ConstantToken(TokenType tokenType, Object value) {
+    public StandaloneToken(TokenType tokenType, Object value) {
         super(tokenType, value);
     }
 

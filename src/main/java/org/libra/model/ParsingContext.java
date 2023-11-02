@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Stack;
 
 import static org.libra.model.token.TokenType.ASSIGNMENT_OPERATOR;
+import static org.libra.model.token.TokenType.METHOD_DECLARATION;
 import static org.libra.utils.Constants.ASSIGNMENT_LITERAL;
 
 public class ParsingContext {
@@ -58,5 +59,15 @@ public class ParsingContext {
         }
 
         return false;
+    }
+
+    public Node retrieveMethodDeclarationNode() {
+        for (Node node : nodes) {
+            if (node.getToken().getTokenType().equals(METHOD_DECLARATION))  {
+                return node;
+            }
+        }
+
+        return null;
     }
 }
