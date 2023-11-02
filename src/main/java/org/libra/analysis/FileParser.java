@@ -95,7 +95,8 @@ public class FileParser {
             isArithmeticOperator(character) ||
             isArithmeticOperator(lastCharacterFromKeyword) ||
             isParenthesis(character) ||
-            isParenthesis(lastCharacterFromKeyword);
+            isParenthesis(lastCharacterFromKeyword) ||
+            isComma(character);
     }
 
     private boolean isArithmeticOperator(char character) {
@@ -119,6 +120,10 @@ public class FileParser {
 
     private boolean isCurlyBrace(char character) {
         return character == OPEN_CURLY_BRACE;
+    }
+
+    private boolean isComma(char character) {
+        return character == COMMA;
     }
 
     private boolean isParenthesis(char character) {

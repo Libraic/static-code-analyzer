@@ -1,8 +1,18 @@
 package org.libra.model.token;
 
+import org.libra.model.AccessModifier;
+import org.libra.model.Membership;
 import org.libra.model.ParsingContext;
 import org.libra.model.node.Node;
+import org.libra.model.node.SubprogramNode;
 import org.libra.model.node.UnaryNode;
+
+import java.util.Iterator;
+
+import static org.libra.model.AccessModifier.PACKAGE_PRIVATE;
+import static org.libra.model.Membership.CLASS;
+import static org.libra.model.Membership.OBJECT;
+import static org.libra.model.token.TokenType.*;
 
 public class EntityNameToken extends Token {
 
@@ -12,12 +22,55 @@ public class EntityNameToken extends Token {
 
     @Override
     public void produceNode(ParsingContext parsingContext) {
+        if (tokenType.equals(METHOD_DECLARATION)) {
+            addSubprogramNodeInParsingContext(parsingContext);
+        } else {
+            addVariableNodeInParsingContext(parsingContext);
+        }
+    }
+
+    private void addSubprogramNodeInParsingContext(ParsingContext parsingContext) {
+        AccessModifier accessModifier = PACKAGE_PRIVATE;
+        String methodName = (String) value;
+        Membership membership = OBJECT;
+        String returnType = "";
+        Iterator<Node> nodeIterator = parsingContext.getNodesIterator();
+
+        while (nodeIterator.hasNext()) {
+            Node currentNode = nodeIterator.next();
+            Object value = currentNode.getToken().getValue();
+            TokenType tokenType = currentNode.getToken().getTokenType();
+            if (tokenType.equals(PROGRAM)) {
+                continue;
+            } else if (tokenType.equals(ACCESS_MODIFIER)) {
+                accessModifier = AccessModifier.createAccessModifier((String) value);
+            } else if (tokenType.equals(STATIC_ACCESS)) {
+                membership = CLASS;
+            } else if (tokenType.equals(RETURN_TYPE)) {
+                returnType = (String) value;
+                break;
+            }
+
+            nodeIterator.remove();
+        }
+
+        nodeIterator.remove();
+        Node subprogramNode = new SubprogramNode(this, methodName, accessModifier, returnType, membership);
+        parsingContext.addNode(subprogramNode);
+    }
+
+    private void addVariableNodeInParsingContext(ParsingContext parsingContext) {
         Node variableNode = new UnaryNode(this);
         if (!parsingContext.isAssignmentNodePresent()) {
             Node previousNode = parsingContext.retrieveAndRemoveLastNode();
             variableNode.addNode(previousNode);
         }
 
-        parsingContext.addNode(variableNode);
+        Node methodDeclarationNode = parsingContext.retrieveMethodDeclarationNode();
+        if (methodDeclarationNode != null) {
+            methodDeclarationNode.addNode(variableNode);
+        } else {
+            parsingContext.addNode(variableNode);
+        }
     }
 }

@@ -1,1 +1,5 @@
-public static void main(String args) { }
+public static void method(Integer number, Integer factor) {
+    number = (2 * ((3 + 4) * 5)) - 2;
+    factor = 2 + 3;
+}
+

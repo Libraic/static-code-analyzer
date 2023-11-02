@@ -8,9 +8,9 @@ import org.libra.model.token.TokenFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.libra.model.token.TokenType.METHOD_NAME;
-import static org.libra.utils.Constants.CURLY_BRACE_LITERAL;
-import static org.libra.utils.Constants.SEMICOLON_LITERAL;
+import static org.libra.model.token.TokenType.COMMA_SEPARATOR;
+import static org.libra.model.token.TokenType.METHOD_DECLARATION;
+import static org.libra.utils.Constants.*;
 
 /**
  * The class used for tokenizing each input sent by the Parser class.
@@ -33,7 +33,7 @@ public class Lexer {
     public List<Token> tokenize(List<String> keywords) {
         List<Token> tokens = new ArrayList<>();
         TokenPremises tokenPremises = TokenPremises.builder()
-            .isMethodDeclaration(keywords.contains(CURLY_BRACE_LITERAL) && !keywords.contains(SEMICOLON_LITERAL))
+            .isMethodDeclaration(keywords.contains(OPEN_CURLY_BRACE_LITERAL) && !keywords.contains(SEMICOLON_LITERAL))
             .build();
         Token programToken = tokenFactory.createProgramToken();
         if (programToken != null) {
@@ -43,15 +43,20 @@ public class Lexer {
         for (int i = 0; i < keywords.size(); ++i) {
             String keyword = keywords.get(i);
             Token token = tokenFactory.produceToken(keyword, i, tokenPremises);
-            if (token.getTokenType().equals(METHOD_NAME)) {
-                tokenPremises.setInsideMethodSignature(true);
-                tokenPremises.setMethodSignatureCurrentPosition(0);
-            }
-
+            adjustTokenPremises(token, tokenPremises);
             tokens.add(token);
             tokenPremises.incrementMethodSignatureCurrentPosition();
         }
 
         return tokens;
+    }
+
+    private void adjustTokenPremises(Token token, TokenPremises tokenPremises) {
+        if (token.getTokenType().equals(METHOD_DECLARATION)) {
+            tokenPremises.setInsideMethodSignature(true);
+            tokenPremises.setMethodSignatureCurrentPosition(0);
+        } else if (token.getTokenType().equals(COMMA_SEPARATOR)) {
+            tokenPremises.setMethodSignatureCurrentPosition(1);
+        }
     }
 }

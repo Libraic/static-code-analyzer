@@ -9,32 +9,37 @@ import static org.libra.model.Color.GREEN;
 import static org.libra.utils.Constants.JSON_OBJECT_END;
 import static org.libra.utils.Constants.JSON_OBJECT_START;
 import static org.libra.utils.Constants.PROGRAM_BODY_KEYWORD;
+import static org.libra.utils.Constants.SUBPROGRAM_LITERAL;
 
 public class ProgramNode extends Node {
 
-    private final List<Node> nodes;
+    private final List<Node> subprograms;
 
     public ProgramNode(Token token) {
         super(token);
-        nodes = new ArrayList<>();
+        subprograms = new ArrayList<>();
     }
 
     @Override
     public void addNode(Node node) {
-        nodes.add(node);
+        subprograms.add(node);
     }
 
     @Override
     public void stringify(int spacing) {
         printStringLiteralWithColor(GREEN, token.toString());
         printStringLiteralWithColor(GREEN, PROGRAM_BODY_KEYWORD + JSON_OBJECT_START);
-        for (int i = 0; i < nodes.size(); ++i) {
-            Node node = nodes.get(i);
-            printStringLiteralWithColor(GREEN, "\tInstruction " + (i + 1) + ": {");
-            node.stringify(spacing + 2);
+        for (int i = 0; i < subprograms.size(); ++i) {
+            Node subprogram = subprograms.get(i);
+            printStringLiteralWithColor(GREEN, SUBPROGRAM_LITERAL + (i + 1) + ": {");
+            subprogram.stringify(spacing + 2);
             printStringLiteralWithColor(GREEN, "\t}");
-            System.out.println();
         }
+
         printStringLiteralWithColor(GREEN, JSON_OBJECT_END);
+    }
+
+    public Node getLastSubprogram() {
+        return subprograms.get(subprograms.size() - 1);
     }
 }
