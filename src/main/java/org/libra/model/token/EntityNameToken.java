@@ -1,5 +1,6 @@
 package org.libra.model.token;
 
+import lombok.EqualsAndHashCode;
 import org.libra.model.AccessModifier;
 import org.libra.model.Membership;
 import org.libra.model.ParsingContext;
@@ -12,8 +13,13 @@ import java.util.Iterator;
 import static org.libra.model.AccessModifier.PACKAGE_PRIVATE;
 import static org.libra.model.Membership.CLASS;
 import static org.libra.model.Membership.OBJECT;
-import static org.libra.model.token.TokenType.*;
+import static org.libra.model.token.TokenType.ACCESS_MODIFIER;
+import static org.libra.model.token.TokenType.METHOD_DECLARATION;
+import static org.libra.model.token.TokenType.PROGRAM;
+import static org.libra.model.token.TokenType.RETURN_TYPE;
+import static org.libra.model.token.TokenType.STATIC_ACCESS;
 
+@EqualsAndHashCode(callSuper = true)
 public class EntityNameToken extends Token {
 
     public EntityNameToken(TokenType tokenType, Object value) {
@@ -61,7 +67,7 @@ public class EntityNameToken extends Token {
 
     private void addVariableNodeInParsingContext(ParsingContext parsingContext) {
         Node variableNode = new UnaryNode(this);
-        if (!parsingContext.isAssignmentNodePresent()) {
+        if (!parsingContext.isAssignmentNodePresent() && parsingContext.isLastNodeDataTypeNode()) {
             Node previousNode = parsingContext.retrieveAndRemoveLastNode();
             variableNode.addNode(previousNode);
         }

@@ -1,5 +1,8 @@
 package org.libra.model.node;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.libra.model.token.Token;
 
 import static org.libra.model.Color.YELLOW;
@@ -11,6 +14,9 @@ import static org.libra.utils.Constants.JSON_OBJECT_END;
 import static org.libra.utils.Constants.JSON_OBJECT_START;
 import static org.libra.utils.Constants.NEW_LINE_DELIMITER;
 
+@Getter
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class UnaryNode extends Node {
 
     private Node child;
@@ -49,4 +55,5 @@ public class UnaryNode extends Node {
 
         return null;
     }
+
 }

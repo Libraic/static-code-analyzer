@@ -1,7 +1,9 @@
 package org.libra.model.node;
 
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 import org.libra.model.Color;
 import org.libra.model.token.Token;
 
@@ -9,11 +11,16 @@ import static org.libra.model.Color.RESET;
 import static org.libra.utils.Constants.NEW_LINE_DELIMITER;
 
 @Getter
+@EqualsAndHashCode
+@ToString
 public abstract class Node {
     protected final Token token;
+    protected final int id;
+    protected static int createdObjects = 0;
 
     public Node(Token token) {
         this.token = token;
+        this.id = createdObjects++;
     }
 
     /**

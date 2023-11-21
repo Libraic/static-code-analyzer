@@ -13,6 +13,18 @@ public class TokenFactory {
 
     private boolean wasProgramTokenCreated;
 
+    /**
+     * We take the keyword we have received as parameter and walk it through some conditions to figure out what kind
+     * of token it represents, taking into consideration its position in the code relative to other keywords as well.
+     *
+     * @param keyword the current keyword that is processed.
+     * @param keywordIndex the index of the current keyword.
+     * @param tokenPremises a list of premises that is essential to avoid ambiguity for certain keywords that may
+     *                      represent more than 1 token. Hence, we adjust the premises on every token we process to
+     *                      know at what point of the code we are - method declaration, method signature, variable
+     *                      declaration, reassignment instruction etc.
+     * @return the corresponding Token to the processed keyword.
+     */
     public Token produceToken(
         String keyword,
         int keywordIndex,
@@ -30,10 +42,10 @@ public class TokenFactory {
             return new EntityNameToken(VARIABLE_NAME, keyword);
         } else if (isMethodName(keyword, keywordIndex, tokenPremises)) {
             return new EntityNameToken(METHOD_DECLARATION, keyword);
-        } else if (isAssignmentOperator(keyword)) {
+        } else if (isAssignmentOperator(keyword, tokenPremises)) {
             return new BinaryExpressionToken(ASSIGNMENT_OPERATOR, keyword);
-        } else if (isParenthesis(keyword)) {
-            return new SpecialSymbolToken(PARENTHESIS, keyword);
+        } else if (isParentheses(keyword)) {
+            return new SpecialSymbolToken(PARENTHESES, keyword);
         } else if (isNumber(keyword)) {
             return new StandaloneToken(NUMERIC, keyword);
         } else if (isArithmeticOperation(keyword)) {
@@ -42,18 +54,22 @@ public class TokenFactory {
             return new StandaloneToken(STRING, keyword);
         } else if (isSeparator(keyword)) {
             return new SpecialSymbolToken(COMMA_SEPARATOR, keyword);
-        }
-        else if (isInstructionOrSubprogram(keyword)) {
+        } else if (isInstructionOrSubprogram(keyword)) {
             return new InstructionToken(
                 keyword.equals(SEMICOLON_LITERAL) ? INSTRUCTION : METHOD,
                 keyword
             );
-        }
-        else {
+        } else {
             throw ExceptionGenerator.of(UNEXPECTED_TOKEN_EXCEPTION);
         }
     }
 
+    /**
+     * This method is responsible for creating the Program Token, which represents the entry point of the Java program
+     * that is currently being analyzed. This particular Token gets created only once, acting like a singleton Token.
+     *
+     * @return the PROGRAM Token.
+     */
     public Token createProgramToken() {
         if (!wasProgramTokenCreated) {
             wasProgramTokenCreated = true;
@@ -63,8 +79,8 @@ public class TokenFactory {
         return null;
     }
 
-    private boolean isParenthesis(String keyword) {
-        return keyword.matches(PARENTHESIS_PATTERN.getRegex());
+    private boolean isParentheses(String keyword) {
+        return keyword.matches(PARENTHESES_PATTERN.getRegex());
     }
 
     private boolean isNumber(String keyword) {
@@ -76,26 +92,20 @@ public class TokenFactory {
     }
 
     private boolean isEntityName(String keyword, int keywordIndex, TokenPremises tokenPremises) {
-        return (((keywordIndex == FIRST_ELEMENT || keywordIndex == SECOND_ELEMENT)
-                    && !tokenPremises.isMethodDeclaration())
-                || (tokenPremises.isInsideMethodSignature()
-                    && tokenPremises.getMethodSignatureCurrentPosition() % 2 != 0))
-            && keyword.matches(VARIABLE_NAME_PATTERN.getRegex());
+        return isVariableName(keywordIndex, tokenPremises) && keyword.matches(ENTITY_NAME_PATTERN.getRegex());
     }
 
     private boolean isMethodName(String keyword, int keywordIndex, TokenPremises tokenPremises) {
-        return (keywordIndex == SECOND_ELEMENT || keywordIndex == THIRD_ELEMENT || keywordIndex == FOURTH_ELEMENT)
-            && keyword.matches(VARIABLE_NAME_PATTERN.getRegex())
+        return (keywordIndex == FIRST_INDEX || keywordIndex == SECOND_INDEX || keywordIndex == THIRD_INDEX)
+            && keyword.matches(ENTITY_NAME_PATTERN.getRegex())
             && tokenPremises.isMethodDeclaration()
             && !tokenPremises.isInsideMethodSignature();
     }
 
     private boolean isDataType(String keyword, int keywordIndex, TokenPremises tokenPremises) {
-        return ((keywordIndex == FIRST_ELEMENT && !tokenPremises.isMethodDeclaration())
-                || (tokenPremises.isMethodDeclaration()
-                    && tokenPremises.isInsideMethodSignature()
-                    && tokenPremises.getMethodSignatureCurrentPosition() % 2 == 0))
-            && keyword.matches(VARIABLE_NAME_PATTERN.getRegex());
+        return (isKeywordAtTheStartOfInstruction(keywordIndex, tokenPremises)
+                || isKeywordInTheMethodSignature(tokenPremises)
+            ) && keyword.matches(ENTITY_NAME_PATTERN.getRegex());
     }
 
     private boolean isAccessModifier(String keyword) {
@@ -114,7 +124,8 @@ public class TokenFactory {
         return keyword.matches(STATIC_ACCESS_PATTERN.getRegex());
     }
 
-    private boolean isAssignmentOperator(String keyword) {
+    private boolean isAssignmentOperator(String keyword, TokenPremises tokenPremises) {
+        tokenPremises.setPostAssignmentKeyword(true);
         return keyword.matches(ASSIGNMENT_OPERATOR_PATTERN.getRegex());
     }
 
@@ -123,13 +134,65 @@ public class TokenFactory {
         int keywordIndex,
         TokenPremises tokenPremises
     ) {
-         return (keywordIndex == FIRST_ELEMENT || keywordIndex == SECOND_ELEMENT || keywordIndex == THIRD_ELEMENT)
-             && keyword.matches(VARIABLE_NAME_PATTERN.getRegex())
+         return (keywordIndex == ZEROTH_INDEX || keywordIndex == FIRST_INDEX || keywordIndex == SECOND_INDEX)
+             && keyword.matches(ENTITY_NAME_PATTERN.getRegex())
              && tokenPremises.isMethodDeclaration()
              && !tokenPremises.isInsideMethodSignature();
     }
 
     private boolean isSeparator(String keyword) {
         return keyword.matches(SEPARATOR_PATTERN.getRegex());
+    }
+
+    private boolean isVariableName(int keywordIndex, TokenPremises tokenPremises) {
+        return isVariableNameBeforeAssignment(keywordIndex, tokenPremises)
+            || tokenPremises.isPostAssignmentKeyword()
+            || isVariableNameInsideMethodSignature(tokenPremises);
+    }
+
+    private boolean isKeywordAtTheStartOfInstruction(
+        int keywordIndex,
+        TokenPremises tokenPremises
+    ) {
+        return keywordIndex == ZEROTH_INDEX
+            && !tokenPremises.isMethodDeclaration()
+            && !tokenPremises.isAssignmentNextKeyword();
+    }
+
+    private boolean isKeywordInTheMethodSignature(TokenPremises tokenPremises) {
+        return tokenPremises.isMethodDeclaration()
+            && tokenPremises.isInsideMethodSignature()
+            && tokenPremises.getMethodSignatureCurrentPosition() % PARITY_CHECKER_NUMBER == EVEN_PARITY_INDICATOR;
+    }
+
+    /**
+     * If we are before assignment, then we either have [DATA_TYPE] [VARIABLE_NAME],
+     * in which case, the variable name represent the second element in the declaration,
+     * either we have [VARIABLE_NAME], representing a reassignment, in which case it is the first element from the
+     * declaration.
+     *
+     * @param keywordIndex representing the index of the keyword in the declaration, 0-indexed.
+     * @param tokenPremises the object containing the premises for different instances.
+     * @return the boolean depicting if the keyword is a variable or not.
+     */
+    private boolean isVariableNameBeforeAssignment(int keywordIndex, TokenPremises tokenPremises) {
+        return (keywordIndex == ZEROTH_INDEX || keywordIndex == FIRST_INDEX)
+            && !tokenPremises.isMethodDeclaration()
+            && tokenPremises.isAssignmentNextKeyword();
+    }
+
+    /**
+     * If we have reached the method signature, the parity of the index will tell us if it is a variable name
+     * or data type. Starting from the parentheses, depicting the starting point of a method signature, it will
+     * have the index 1. Then the index will be incremented, leading to an even index, which corresponds to DATA_TYPE
+     * keyword. Then, the position will be incremented again, leading to an odd index, depicting a VARIABLE_NAME.
+     * Once we find a comma, we set the index to 1 again. And the process continues till we find a closed parentheses.
+     *
+     * @param tokenPremises the object containing the premises for different instances.
+     * @return the boolean depicting if the keyword is a variable or not.
+     */
+    private boolean isVariableNameInsideMethodSignature(TokenPremises tokenPremises) {
+        return tokenPremises.isInsideMethodSignature()
+            && tokenPremises.getMethodSignatureCurrentPosition() % 2 != 0;
     }
 }
