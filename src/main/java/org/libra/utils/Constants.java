@@ -14,8 +14,8 @@ public class Constants {
     public static final char DIVISION_OPERATOR = '/';
     public static final char MULTIPLICATION_OPERATOR = '*';
     public static final char ASSIGNMENT_OPERATOR = '=';
-    public static final char OPEN_PARENTHESIS_CHARACTER = '(';
-    public static final char CLOSED_PARENTHESIS = ')';
+    public static final char OPEN_PARENTHESES_CHARACTER = '(';
+    public static final char CLOSED_PARENTHESES = ')';
     public static final char NEW_LINE = '\n';
     public static final char CARRIAGE_RETURN = '\r';
     public static final char OPEN_CURLY_BRACE = '{';
@@ -27,8 +27,8 @@ public class Constants {
 
     public static final String FILES_RELATIVE_PATH = "./src/main/resources/files/";
     public static final String ASSIGNMENT_LITERAL = "=";
-    public static final String OPEN_PARENTHESIS_LITERAL = "(";
-    public static final String CLOSED_PARENTHESIS_LITERAL = ")";
+    public static final String OPEN_PARENTHESES_LITERAL = "(";
+    public static final String CLOSED_PARENTHESES_LITERAL = ")";
     public static final String PROGRAM_TOKEN_VALUE = "Java Program";
     public static final String NEW_LINE_DELIMITER = "\n";
     public static final String PROGRAM_BODY_KEYWORD = "Program Body";
@@ -51,8 +51,10 @@ public class Constants {
     /**
      * <em><strong>int</strong></em> data type constants.
      */
-    public static final int FIRST_ELEMENT = 0;
-    public static final int SECOND_ELEMENT = 1;
-    public static final int THIRD_ELEMENT = 2;
-    public static final int FOURTH_ELEMENT = 3;
+    public static final int ZEROTH_INDEX = 0;
+    public static final int FIRST_INDEX = 1;
+    public static final int SECOND_INDEX = 2;
+    public static final int THIRD_INDEX = 3;
+    public static final int EVEN_PARITY_INDICATOR = 0;
+    public static final int PARITY_CHECKER_NUMBER = 2;
 }

@@ -1,5 +1,8 @@
 package org.libra.model.node;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.libra.model.token.Token;
 
 import java.util.ArrayList;
@@ -11,6 +14,9 @@ import static org.libra.utils.Constants.JSON_OBJECT_START;
 import static org.libra.utils.Constants.PROGRAM_BODY_KEYWORD;
 import static org.libra.utils.Constants.SUBPROGRAM_LITERAL;
 
+@Getter
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class ProgramNode extends Node {
 
     private final List<Node> subprograms;
@@ -42,4 +48,5 @@ public class ProgramNode extends Node {
     public Node getLastSubprogram() {
         return subprograms.get(subprograms.size() - 1);
     }
+
 }

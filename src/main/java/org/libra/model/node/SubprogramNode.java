@@ -1,6 +1,8 @@
 package org.libra.model.node;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 import org.libra.model.AccessModifier;
 import org.libra.model.Membership;
 import org.libra.model.token.Token;
@@ -9,10 +11,13 @@ import org.libra.model.token.TokenType;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.libra.model.Color.*;
+import static org.libra.model.Color.CYAN;
+import static org.libra.model.Color.RED;
 import static org.libra.utils.Constants.INSTRUCTION_LITERAL;
 
 @Getter
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class SubprogramNode extends Node {
 
     private final List<Node> instructions;
