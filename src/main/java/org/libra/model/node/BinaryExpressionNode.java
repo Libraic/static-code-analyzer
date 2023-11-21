@@ -1,7 +1,9 @@
 package org.libra.model.node;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.libra.model.token.Token;
 
 import static org.libra.model.Color.BLUE;
@@ -13,6 +15,8 @@ import static org.libra.utils.Constants.RIGHT_OPERAND_LITERAL;
 
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class BinaryExpressionNode extends Node {
 
     private Node leftHandOperand;

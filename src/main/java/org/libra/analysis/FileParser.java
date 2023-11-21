@@ -2,18 +2,22 @@ package org.libra.analysis;
 
 import lombok.AllArgsConstructor;
 import org.libra.exception.ExceptionGenerator;
-import org.libra.exception.StaticCodeAnalyzerException;
-import org.libra.model.token.Token;
 import org.libra.utils.Constants;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.libra.exception.ExceptionType.FILE_PROCESSING_EXCEPTION;
-import static org.libra.utils.Constants.*;
+import static org.libra.utils.Constants.ASSIGNMENT_OPERATOR;
+import static org.libra.utils.Constants.CARRIAGE_RETURN;
+import static org.libra.utils.Constants.CLOSED_PARENTHESES;
+import static org.libra.utils.Constants.COMMA;
+import static org.libra.utils.Constants.NEW_LINE;
+import static org.libra.utils.Constants.OPEN_CURLY_BRACE;
+import static org.libra.utils.Constants.SEMICOLON;
+import static org.libra.utils.Constants.SPACE;
 
 /**
  * This class acts as parser for input files, which contains the code be analyzed.
@@ -21,8 +25,6 @@ import static org.libra.utils.Constants.*;
 
 @AllArgsConstructor
 public class FileParser {
-
-    private final Lexer lexer;
 
     /**
      * The method takes the input file and reads it character by character.
@@ -37,15 +39,16 @@ public class FileParser {
      *     <li><strong>java.lang.Integer, int, DeclaredDataType</strong> - Data Type keywords</li>
      *     <li><strong>=</strong> - Assignment keyword</li>
      *     <li><strong>+, -, /, *</strong> - Arithmetic keywords</li>
-     *     <li><strong>(, )</strong> - Open/Closed Parenthesis keywords</li>
+     *     <li><strong>(, )</strong> - Open/Closed Parentheses keywords</li>
      *     <li><strong>[, ]</strong> - Open/Closed Brackets keywords</li>
      *     <li><strong>{, }</strong> - Open/Closed Braces keywords</li>
      * </ul>
      * @param fileName the input file name.
      */
-    public List<Token> parseFile(String fileName) {
-        List<Token> tokens = new ArrayList<>();
+    public Map<Integer, List<String>> parseFile(String fileName) {
         List<String> keywords = new ArrayList<>();
+        Map<Integer, List<String>> keywordsFromEachRow = new LinkedHashMap<>();
+        int row = 1;
 
         try (
             FileReader fileReader = new FileReader(fileName);
@@ -66,20 +69,18 @@ public class FileParser {
 
                 if (isSemicolon(character) || isCurlyBrace(character)) {
                     keywords.add(Character.toString(character));
-                    tokens.addAll(lexer.tokenize(keywords));
+                    keywordsFromEachRow.put(row++, keywords);
                     keywords = new ArrayList<>();
                     continue;
                 }
 
                 appendCharacterToKeyword(character, keyword);
             }
-        } catch (StaticCodeAnalyzerException e) {
-            throw ExceptionGenerator.of(e.getExceptionType());
         } catch (IOException e) {
             throw ExceptionGenerator.of(FILE_PROCESSING_EXCEPTION);
         }
 
-        return tokens;
+        return keywordsFromEachRow;
     }
 
     private boolean isKeywordComplete(char character, StringBuilder keyword) {
@@ -94,8 +95,8 @@ public class FileParser {
             isAssignmentOperator(lastCharacterFromKeyword) ||
             isArithmeticOperator(character) ||
             isArithmeticOperator(lastCharacterFromKeyword) ||
-            isParenthesis(character) ||
-            isParenthesis(lastCharacterFromKeyword) ||
+            isParentheses(character) ||
+            isParentheses(lastCharacterFromKeyword) ||
             isComma(character);
     }
 
@@ -126,8 +127,8 @@ public class FileParser {
         return character == COMMA;
     }
 
-    private boolean isParenthesis(char character) {
-        return character == Constants.OPEN_PARENTHESIS_CHARACTER || character == CLOSED_PARENTHESIS;
+    private boolean isParentheses(char character) {
+        return character == Constants.OPEN_PARENTHESES_CHARACTER || character == CLOSED_PARENTHESES;
     }
 
     private boolean isNewLineOrCarriageReturn(char character) {
