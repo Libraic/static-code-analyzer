@@ -83,7 +83,6 @@ public class Lexer {
         // the name of the variable (since we have DATA_TYPE VARIABLE_NAME, DATA_TYPE VARIABLE_NAME...).
         // If the previous token is a comma, we have to reset the index that points to the current keyword from the method
         // declaration. Resetting it means to initialize it as being 1.
-        // TODO: Add support for interpreting the "final" keyword that precedes the variables
         if (tokenType.equals(METHOD_DECLARATION)) {
             tokenPremises.setInsideMethodSignature(true);
             tokenPremises.setMethodSignatureCurrentPosition(ZEROTH_INDEX);
