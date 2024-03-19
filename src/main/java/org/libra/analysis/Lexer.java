@@ -8,9 +8,11 @@ import org.libra.model.token.TokenFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.libra.model.token.TokenType;
 
 import static org.libra.model.token.TokenType.COMMA_SEPARATOR;
 import static org.libra.model.token.TokenType.METHOD_DECLARATION;
+import static org.libra.model.token.TokenType.UNDEFINED;
 import static org.libra.utils.Constants.*;
 
 /**
@@ -53,30 +55,39 @@ public class Lexer {
 
         for (int i = 0; i < keywords.size(); ++i) {
             String keyword = keywords.get(i);
-            checkIfAssignmentIsNextKeywordAndAdjustTokenPremises(tokenPremises, keywords, i);
+            adjustTokenPremises(tokenPremises, keywords, i, tokens);
             Token token = tokenFactory.produceToken(keyword, i, tokenPremises);
-            adjustMethodRelatedTokenPremises(token, tokenPremises);
             tokens.add(token);
         }
 
         return tokens;
     }
 
-    private void checkIfAssignmentIsNextKeywordAndAdjustTokenPremises(
+    private void adjustTokenPremises(
         TokenPremises tokenPremises,
         List<String> keywords,
-        int currentIndex
+        int currentIndex,
+        List<Token> tokens
     ) {
-        tokenPremises.setAssignmentNextKeyword(currentIndex + 1 < keywords.size()
-            && keywords.get(currentIndex + 1).equals(ASSIGNMENT_LITERAL)
-        );
-    }
+        String nextKeyword = currentIndex + 1 < keywords.size() ? keywords.get(currentIndex + 1) : EMPTY_STRING;
+        TokenType tokenType = tokens.isEmpty() ? UNDEFINED : tokens.get(tokens.size() - 1).getTokenType();
 
-    private void adjustMethodRelatedTokenPremises(Token token, TokenPremises tokenPremises) {
-        if (token.getTokenType().equals(METHOD_DECLARATION)) {
+        // Check if next keyword is open parenthesis. This will be used to establish if the current keyword is method declaration
+        tokenPremises.setNextKeywordOpenParenthesis(nextKeyword.equals(OPEN_PARENTHESES_LITERAL));
+
+        // Check if assignment is next keyword and adjust token premises
+        tokenPremises.setAssignmentNextKeyword(nextKeyword.equals(ASSIGNMENT_LITERAL));
+
+        // If the previous token is of METHOD_DECLARATION type, we have to mark that we are about to analyze the signature of the method.
+        // Also, we start indexing each keyword that represents the method signature to determine which keyword is the data type and which is the
+        // the name of the variable (since we have DATA_TYPE VARIABLE_NAME, DATA_TYPE VARIABLE_NAME...).
+        // If the previous token is a comma, we have to reset the index that points to the current keyword from the method
+        // declaration. Resetting it means to initialize it as being 1.
+        // TODO: Add support for interpreting the "final" keyword that precedes the variables
+        if (tokenType.equals(METHOD_DECLARATION)) {
             tokenPremises.setInsideMethodSignature(true);
             tokenPremises.setMethodSignatureCurrentPosition(ZEROTH_INDEX);
-        } else if (token.getTokenType().equals(COMMA_SEPARATOR)) {
+        } else if (tokenType.equals(COMMA_SEPARATOR)) {
             tokenPremises.setMethodSignatureCurrentPosition(FIRST_INDEX);
         }
 

@@ -41,6 +41,14 @@ public class TokenPremises {
      */
     private int methodSignatureCurrentPosition;
 
+    /**
+     * A flag that indicates if the next keyword is open parenthesis.
+     */
+    private boolean isNextKeywordOpenParenthesis;
+
+    /**
+     * Utility method to increment the index that points to the current position inside the signature of the method.
+     */
     public void incrementMethodSignatureCurrentPosition() {
         ++methodSignatureCurrentPosition;
     }

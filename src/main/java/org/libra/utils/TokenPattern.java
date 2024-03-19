@@ -19,6 +19,7 @@ public enum TokenPattern {
     INSTRUCTION_SUBPROGRAM_PATTERN("^(;|\\{)$"),
     ACCESS_MODIFIER_PATTERN("^public|private|protected$"),
     STATIC_ACCESS_PATTERN("^static$"),
+    FINAL_PATTERN("^final$"),
     PARENTHESES_PATTERN("^(\\(|\\))$"),
     SEPARATOR_PATTERN("^,$");
 

@@ -13,6 +13,7 @@ import java.util.Map;
 
 import static org.libra.model.AccessModifier.PUBLIC;
 import static org.libra.model.Membership.CLASS;
+import static org.libra.model.State.OVERRIDABLE;
 import static org.libra.utils.TestConstants.ASSIGNEMENT_OPERATOR_TOKEN;
 import static org.libra.utils.TestConstants.CLOSED_PARENTHESES_TOKEN;
 import static org.libra.utils.TestConstants.COMMA_SEPARATOR_TOKEN;
@@ -34,6 +35,7 @@ import static org.libra.utils.TestConstants.PLUS_OPERATOR_TOKEN;
 import static org.libra.utils.TestConstants.PRIMITIVE_INT_DATA_TYPE_TOKEN;
 import static org.libra.utils.TestConstants.PROGRAM_TOKEN;
 import static org.libra.utils.TestConstants.PUBLIC_ACCESS_TOKEN;
+import static org.libra.utils.TestConstants.STATE_TOKEN;
 import static org.libra.utils.TestConstants.STATIC_ACCESS_TOKEN;
 import static org.libra.utils.TestConstants.VARIABLE_NAME_TOKEN_A;
 import static org.libra.utils.TestConstants.VARIABLE_NAME_TOKEN_B;
@@ -128,7 +130,72 @@ public class TestObjects {
         NUMERIC_TOKEN_3,
         INSTRUCTION_TOKEN
     );
+    public static final List<Token> TEST_FILE_4_TOKENS = List.of(
+        PROGRAM_TOKEN,
+        PUBLIC_ACCESS_TOKEN,
+        VOID_RETURN_TYPE_TOKEN,
+        METHOD_DECLARATION_TOKEN_DO_SOME_ARITHMETIC,
+        OPEN_PARENTHESES_TOKEN,
+        INTEGER_DATA_TYPE_TOKEN,
+        VARIABLE_NAME_TOKEN_NUMBER,
+        COMMA_SEPARATOR_TOKEN,
+        INTEGER_DATA_TYPE_TOKEN,
+        VARIABLE_NAME_TOKEN_FACTOR,
+        CLOSED_PARENTHESES_TOKEN,
+        METHOD_INSTRUCTION_TOKEN
+    );
 
+    public static final List<Token> TEST_FILE_5_TOKENS = List.of(
+        PROGRAM_TOKEN,
+        VOID_RETURN_TYPE_TOKEN,
+        METHOD_DECLARATION_TOKEN_DO_SOME_ARITHMETIC,
+        OPEN_PARENTHESES_TOKEN,
+        INTEGER_DATA_TYPE_TOKEN,
+        VARIABLE_NAME_TOKEN_NUMBER,
+        COMMA_SEPARATOR_TOKEN,
+        INTEGER_DATA_TYPE_TOKEN,
+        VARIABLE_NAME_TOKEN_FACTOR,
+        CLOSED_PARENTHESES_TOKEN,
+        METHOD_INSTRUCTION_TOKEN
+    );
+
+    public static final List<Token> TEST_FILE_6_TOKENS = List.of(
+        PROGRAM_TOKEN,
+        STATIC_ACCESS_TOKEN,
+        VOID_RETURN_TYPE_TOKEN,
+        METHOD_DECLARATION_TOKEN_DO_SOME_ARITHMETIC,
+        OPEN_PARENTHESES_TOKEN,
+        INTEGER_DATA_TYPE_TOKEN,
+        VARIABLE_NAME_TOKEN_NUMBER,
+        COMMA_SEPARATOR_TOKEN,
+        INTEGER_DATA_TYPE_TOKEN,
+        VARIABLE_NAME_TOKEN_FACTOR,
+        CLOSED_PARENTHESES_TOKEN,
+        METHOD_INSTRUCTION_TOKEN
+    );
+
+    public static final List<Token> TEST_FILE_7_TOKENS = List.of(
+        PROGRAM_TOKEN,
+        PUBLIC_ACCESS_TOKEN,
+        STATIC_ACCESS_TOKEN,
+        STATE_TOKEN,
+        VOID_RETURN_TYPE_TOKEN,
+        METHOD_DECLARATION_TOKEN_DO_SOME_ARITHMETIC,
+        OPEN_PARENTHESES_TOKEN,
+        INTEGER_DATA_TYPE_TOKEN,
+        VARIABLE_NAME_TOKEN_NUMBER,
+        COMMA_SEPARATOR_TOKEN,
+        INTEGER_DATA_TYPE_TOKEN,
+        VARIABLE_NAME_TOKEN_FACTOR,
+        CLOSED_PARENTHESES_TOKEN,
+        METHOD_INSTRUCTION_TOKEN
+    );
+
+    /*
+        public static void function() {
+            int a = 2 + 3;
+        }
+     */
     public static Map<Integer, List<String>> getTestFile1Keywords() {
         Map<Integer, List<String>> map = new LinkedHashMap<>();
         map.put(1, List.of("public", "static", "void", "function", "(", ")", "{"));
@@ -136,6 +203,11 @@ public class TestObjects {
         return map;
     }
 
+    /*
+        public static void function(int a, int b) {
+            int result = a * 3 + b * 5;
+        }
+     */
     public static Map<Integer, List<String>> getTestFile2Keywords() {
         Map<Integer, List<String>> map = new LinkedHashMap<>();
         map.put(
@@ -146,6 +218,12 @@ public class TestObjects {
         return map;
     }
 
+    /*
+        public static void doSomeArithmetic(Integer number, Integer factor) {
+            number = (2 * ((3 + 4) * 5)) - 2;
+            factor = 2 + 3;
+        }
+     */
     public static Map<Integer, List<String>> getTestFile3Keywords() {
         Map<Integer, List<String>> map = new LinkedHashMap<>();
         map.put(
@@ -166,6 +244,66 @@ public class TestObjects {
             List.of("factor", "=", "2", "+", "3", ";")
         );
 
+        return map;
+    }
+
+    /*
+        Only the method declaration
+        public void doSomeArithmetic(Integer number, Integer factor) {
+     */
+    public static Map<Integer, List<String>> getTestFile4Keywords() {
+        Map<Integer, List<String>> map = new LinkedHashMap<>();
+        map.put(
+            1,
+            List.of("public", "void", "doSomeArithmetic", "(", "Integer", "number", ",", "Integer",
+                "factor", ")", "{"
+            )
+        );
+        return map;
+    }
+
+    /*
+        Only the method declaration
+        void doSomeArithmetic(Integer number, Integer factor) {
+     */
+    public static Map<Integer, List<String>> getTestFile5Keywords() {
+        Map<Integer, List<String>> map = new LinkedHashMap<>();
+        map.put(
+            1,
+            List.of("void", "doSomeArithmetic", "(", "Integer", "number", ",", "Integer",
+                "factor", ")", "{"
+            )
+        );
+        return map;
+    }
+
+    /*
+        Only the method declaration
+        static void doSomeArithmetic(Integer number, Integer factor) {
+     */
+    public static Map<Integer, List<String>> getTestFile6Keywords() {
+        Map<Integer, List<String>> map = new LinkedHashMap<>();
+        map.put(
+            1,
+            List.of("static", "void", "doSomeArithmetic", "(", "Integer", "number", ",", "Integer",
+                "factor", ")", "{"
+            )
+        );
+        return map;
+    }
+
+    /*
+        Only the method declaration
+        public static final void doSomeArithmetic(Integer number, Integer factor) {
+     */
+    public static Map<Integer, List<String>> getTestFile7Keywords() {
+        Map<Integer, List<String>> map = new LinkedHashMap<>();
+        map.put(
+            1,
+            List.of("public", "static", "final", "void", "doSomeArithmetic", "(", "Integer", "number", ",", "Integer",
+                "factor", ")", "{"
+            )
+        );
         return map;
     }
 
@@ -198,6 +336,7 @@ public class TestObjects {
             METHOD_DECLARATION_TOKEN_FUNCTION,
             FUNCTION_METHOD_NAME,
             PUBLIC,
+            OVERRIDABLE,
             VOID_RETURN_TYPE,
             CLASS
         );
@@ -252,6 +391,7 @@ public class TestObjects {
             METHOD_DECLARATION_TOKEN_FUNCTION,
             FUNCTION_METHOD_NAME,
             PUBLIC,
+            OVERRIDABLE,
             VOID_RETURN_TYPE,
             CLASS
         );
@@ -319,6 +459,7 @@ public class TestObjects {
             METHOD_DECLARATION_TOKEN_DO_SOME_ARITHMETIC,
             DO_SOME_ARITHMETIC_METHOD_NAME,
             PUBLIC,
+            OVERRIDABLE,
             VOID_RETURN_TYPE,
             CLASS
         );

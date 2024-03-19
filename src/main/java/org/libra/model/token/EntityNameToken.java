@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import org.libra.model.AccessModifier;
 import org.libra.model.Membership;
 import org.libra.model.ParsingContext;
+import org.libra.model.State;
 import org.libra.model.node.Node;
 import org.libra.model.node.SubprogramNode;
 import org.libra.model.node.UnaryNode;
@@ -13,10 +14,12 @@ import java.util.Iterator;
 import static org.libra.model.AccessModifier.PACKAGE_PRIVATE;
 import static org.libra.model.Membership.CLASS;
 import static org.libra.model.Membership.OBJECT;
+import static org.libra.model.State.OVERRIDABLE;
 import static org.libra.model.token.TokenType.ACCESS_MODIFIER;
 import static org.libra.model.token.TokenType.METHOD_DECLARATION;
 import static org.libra.model.token.TokenType.PROGRAM;
 import static org.libra.model.token.TokenType.RETURN_TYPE;
+import static org.libra.model.token.TokenType.STATE;
 import static org.libra.model.token.TokenType.STATIC_ACCESS;
 
 @EqualsAndHashCode(callSuper = true)
@@ -37,6 +40,7 @@ public class EntityNameToken extends Token {
 
     private void addSubprogramNodeInParsingContext(ParsingContext parsingContext) {
         AccessModifier accessModifier = PACKAGE_PRIVATE;
+        State state = OVERRIDABLE;
         String methodName = (String) value;
         Membership membership = OBJECT;
         String returnType = "";
@@ -50,6 +54,8 @@ public class EntityNameToken extends Token {
                 continue;
             } else if (tokenType.equals(ACCESS_MODIFIER)) {
                 accessModifier = AccessModifier.createAccessModifier((String) value);
+            } else if (tokenType.equals(STATE)) {
+                state = State.createState((String) value);
             } else if (tokenType.equals(STATIC_ACCESS)) {
                 membership = CLASS;
             } else if (tokenType.equals(RETURN_TYPE)) {
@@ -61,7 +67,7 @@ public class EntityNameToken extends Token {
         }
 
         nodeIterator.remove();
-        Node subprogramNode = new SubprogramNode(this, methodName, accessModifier, returnType, membership);
+        Node subprogramNode = new SubprogramNode(this, methodName, accessModifier, state, returnType, membership);
         parsingContext.addNode(subprogramNode);
     }
 

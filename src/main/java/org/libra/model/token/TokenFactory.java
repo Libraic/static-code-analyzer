@@ -34,6 +34,8 @@ public class TokenFactory {
             return new StandaloneToken(ACCESS_MODIFIER, keyword);
         } else if (isStaticAccess(keyword)) {
             return new StandaloneToken(STATIC_ACCESS, keyword);
+        } else if (isFinalKeyword(keyword)) {
+            return new StandaloneToken(STATE, keyword);
         } else if (isDataType(keyword, keywordIndex, tokenPremises)) {
             return new DataTypeToken(DATA_TYPE, keyword);
         } else if (isReturnType(keyword, keywordIndex, tokenPremises)) {
@@ -60,7 +62,10 @@ public class TokenFactory {
                 keyword
             );
         } else {
-            throw ExceptionGenerator.of(UNEXPECTED_TOKEN_EXCEPTION);
+            throw ExceptionGenerator.of(
+                UNEXPECTED_TOKEN_EXCEPTION,
+                String.format("The processed keyword [{%s}] is not recognized by the system.", keyword)
+            );
         }
     }
 
@@ -96,16 +101,16 @@ public class TokenFactory {
     }
 
     private boolean isMethodName(String keyword, int keywordIndex, TokenPremises tokenPremises) {
-        return (keywordIndex == FIRST_INDEX || keywordIndex == SECOND_INDEX || keywordIndex == THIRD_INDEX)
+        return (keywordIndex == FIRST_INDEX || keywordIndex == SECOND_INDEX || keywordIndex == THIRD_INDEX || keywordIndex == FOURTH_INDEX)
             && keyword.matches(ENTITY_NAME_PATTERN.getRegex())
             && tokenPremises.isMethodDeclaration()
-            && !tokenPremises.isInsideMethodSignature();
+            && !tokenPremises.isInsideMethodSignature()
+            && tokenPremises.isNextKeywordOpenParenthesis();
     }
 
     private boolean isDataType(String keyword, int keywordIndex, TokenPremises tokenPremises) {
-        return (isKeywordAtTheStartOfInstruction(keywordIndex, tokenPremises)
-                || isKeywordInTheMethodSignature(tokenPremises)
-            ) && keyword.matches(ENTITY_NAME_PATTERN.getRegex());
+        return (isKeywordAtTheStartOfInstruction(keywordIndex, tokenPremises) || isKeywordInTheMethodSignature(tokenPremises))
+            && keyword.matches(ENTITY_NAME_PATTERN.getRegex());
     }
 
     private boolean isAccessModifier(String keyword) {
@@ -124,6 +129,10 @@ public class TokenFactory {
         return keyword.matches(STATIC_ACCESS_PATTERN.getRegex());
     }
 
+    private boolean isFinalKeyword(String keyword) {
+        return keyword.matches(FINAL_PATTERN.getRegex());
+    }
+
     private boolean isAssignmentOperator(String keyword, TokenPremises tokenPremises) {
         tokenPremises.setPostAssignmentKeyword(true);
         return keyword.matches(ASSIGNMENT_OPERATOR_PATTERN.getRegex());
@@ -134,10 +143,11 @@ public class TokenFactory {
         int keywordIndex,
         TokenPremises tokenPremises
     ) {
-         return (keywordIndex == ZEROTH_INDEX || keywordIndex == FIRST_INDEX || keywordIndex == SECOND_INDEX)
+         return (keywordIndex == ZEROTH_INDEX || keywordIndex == FIRST_INDEX || keywordIndex == SECOND_INDEX || keywordIndex == THIRD_INDEX)
              && keyword.matches(ENTITY_NAME_PATTERN.getRegex())
              && tokenPremises.isMethodDeclaration()
-             && !tokenPremises.isInsideMethodSignature();
+             && !tokenPremises.isInsideMethodSignature()
+             && !tokenPremises.isNextKeywordOpenParenthesis();
     }
 
     private boolean isSeparator(String keyword) {

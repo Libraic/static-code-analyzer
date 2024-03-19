@@ -10,8 +10,6 @@ import lombok.Getter;
 @Getter
 public enum ExceptionType {
 
-    FILE_PROCESSING_EXCEPTION("An error occurred while processing the provided file."),
-    UNEXPECTED_TOKEN_EXCEPTION("The processed token is not recognized by the system.");
-
-    private final String message;
+    FILE_PROCESSING_EXCEPTION,
+    UNEXPECTED_TOKEN_EXCEPTION
 }

@@ -21,6 +21,7 @@ import static org.libra.model.token.TokenType.NUMERIC;
 import static org.libra.model.token.TokenType.PARENTHESES;
 import static org.libra.model.token.TokenType.PROGRAM;
 import static org.libra.model.token.TokenType.RETURN_TYPE;
+import static org.libra.model.token.TokenType.STATE;
 import static org.libra.model.token.TokenType.STATIC_ACCESS;
 import static org.libra.model.token.TokenType.VARIABLE_NAME;
 
@@ -36,6 +37,7 @@ public class TestConstants {
     public static final Token PROGRAM_TOKEN = new ProgramToken(PROGRAM, PROGRAM_TOKEN_VALUE);
     public static final Token PUBLIC_ACCESS_TOKEN = new StandaloneToken(ACCESS_MODIFIER, "public");
     public static final Token STATIC_ACCESS_TOKEN = new StandaloneToken(STATIC_ACCESS, "static");
+    public static final Token STATE_TOKEN = new StandaloneToken(STATE, "final");
     public static final Token VOID_RETURN_TYPE_TOKEN = new DataTypeToken(RETURN_TYPE, "void");
     public static final Token METHOD_DECLARATION_TOKEN_FUNCTION = new EntityNameToken(
         METHOD_DECLARATION,
