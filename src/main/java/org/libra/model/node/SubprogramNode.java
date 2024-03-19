@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.ToString;
 import org.libra.model.AccessModifier;
 import org.libra.model.Membership;
+import org.libra.model.State;
 import org.libra.model.token.Token;
 import org.libra.model.token.TokenType;
 
@@ -24,6 +25,7 @@ public class SubprogramNode extends Node {
     private final List<Node> signatureVariables;
     private final String methodName;
     private final AccessModifier accessModifier;
+    private final State state;
     private final String returnType;
     private final Membership membership;
 
@@ -31,6 +33,7 @@ public class SubprogramNode extends Node {
         Token token,
         String methodName,
         AccessModifier accessModifier,
+        State state,
         String returnType,
         Membership membership
     ) {
@@ -39,6 +42,7 @@ public class SubprogramNode extends Node {
         this.accessModifier = accessModifier;
         this.returnType = returnType;
         this.membership = membership;
+        this.state = state;
         instructions = new ArrayList<>();
         signatureVariables = new ArrayList<>();
     }
@@ -58,6 +62,7 @@ public class SubprogramNode extends Node {
         printStringLiteralWithColor(CYAN, spacingLiteral + "Type: SUBPROGRAM");
         printStringLiteralWithColor(CYAN, spacingLiteral + "Subprogram Name: " + methodName);
         printStringLiteralWithColor(CYAN, spacingLiteral + "Access: " + accessModifier);
+        printStringLiteralWithColor(CYAN, spacingLiteral + "State: " + state);
         printStringLiteralWithColor(CYAN, spacingLiteral + "Membership: " + membership);
         printStringLiteralWithColor(CYAN, spacingLiteral + "Signature variables: {");
         for (Node signatureVariableNode : signatureVariables) {

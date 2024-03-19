@@ -5,7 +5,7 @@ package org.libra.exception;
  */
 public final class ExceptionGenerator extends RuntimeException {
 
-    public static StaticCodeAnalyzerException of(ExceptionType exceptionType) {
-        throw new StaticCodeAnalyzerException(exceptionType);
+    public static StaticCodeAnalyzerException of(ExceptionType exceptionType, String message) {
+        throw new StaticCodeAnalyzerException(exceptionType, message);
     }
 }

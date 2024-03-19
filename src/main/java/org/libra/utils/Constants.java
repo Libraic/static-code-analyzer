@@ -47,6 +47,7 @@ public class Constants {
     public static final String SEMICOLON_LITERAL = ";";
     public static final String OPEN_CURLY_BRACE_LITERAL = "{";
     public static final String COMMA_LITERAL = ",";
+    public static final String EMPTY_STRING = "";
 
     /**
      * <em><strong>int</strong></em> data type constants.
@@ -55,6 +56,7 @@ public class Constants {
     public static final int FIRST_INDEX = 1;
     public static final int SECOND_INDEX = 2;
     public static final int THIRD_INDEX = 3;
+    public static final int FOURTH_INDEX = 4;
     public static final int EVEN_PARITY_INDICATOR = 0;
     public static final int PARITY_CHECKER_NUMBER = 2;
 }

@@ -77,7 +77,10 @@ public class FileParser {
                 appendCharacterToKeyword(character, keyword);
             }
         } catch (IOException e) {
-            throw ExceptionGenerator.of(FILE_PROCESSING_EXCEPTION);
+            throw ExceptionGenerator.of(
+                FILE_PROCESSING_EXCEPTION,
+                String.format("An exception occurred while parsing the {%s} file.", fileName)
+            );
         }
 
         return keywordsFromEachRow;
