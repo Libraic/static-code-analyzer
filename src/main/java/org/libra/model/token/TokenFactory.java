@@ -11,6 +11,8 @@ import static org.libra.model.token.TokenType.CLASS_DECLARATION;
 import static org.libra.utils.Constants.*;
 import static org.libra.utils.TokenPattern.*;
 
+// TODO: Establish each type of token without using indexes
+// TODO: Describe each method used to deduce what type of keyword are we dealing with
 public class TokenFactory {
 
     private boolean wasProgramTokenCreated;
@@ -113,6 +115,13 @@ public class TokenFactory {
         return isVariableName(keywordIndex, tokenPremises) && keyword.matches(ENTITY_NAME_PATTERN.getRegex());
     }
 
+
+    /**
+     * @param keyword       the current keyword that is being analyzed.
+     * @param keywordIndex  the index of the current keyword.
+     * @param tokenPremises the token premises.
+     * @return a boolean indicating if the current keyword represents the name of a method.
+     */
     private boolean isMethodName(String keyword, int keywordIndex, TokenPremises tokenPremises) {
         return (keywordIndex == FIRST_INDEX || keywordIndex == SECOND_INDEX || keywordIndex == THIRD_INDEX || keywordIndex == FOURTH_INDEX)
             && keyword.matches(ENTITY_NAME_PATTERN.getRegex())

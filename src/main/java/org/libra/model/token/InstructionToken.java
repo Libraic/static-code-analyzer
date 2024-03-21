@@ -46,36 +46,58 @@ public class InstructionToken extends Token {
      */
     @Override
     public void produceNode(ParsingContext parsingContext) {
+        // If we have an assignment node, it is probable that we have some arithmetic operations.
+        // In this case, we delegate this task, namely to search for arithmetic operations to the arithmeticService.
         int start = parsingContext.findAssignmentNodeIndex();
         if (start != -1) {
             arithmeticService.handleMultiplicationAndAddition(parsingContext, start);
         }
 
+        // Then, we proceed to create the instruction node. This node acts as an aggregator for the previous nodes.
+        // The previous nodes are the ones created from the last instruction.
+        // "Instruction" word can be a little confusing, since, in this application, we consider Classes/Methods declaration
+        // instructions as well.
         Node instructionNode = new UnaryNode(this);
         Iterator<Node> nodeIterator = parsingContext.getNodesIterator();
         while (nodeIterator.hasNext()) {
             Node currentNode = nodeIterator.next();
+
+            // If we find some redundant instructions, we delete them, since they do not present any interest for deconstructing the program.
             if (isRedundantToken(currentNode.getToken().getValue())) {
                 nodeIterator.remove();
                 continue;
             }
 
+            // If the instruction node is of type PROGRAM, we have to be careful what node is about to be added, since some nodes have a dedicated
+            // place and have to be added only there.
+            // If the current node is a CLASS_DECLARATION, we have to develop a dedicated
+            // logic to add the node, since it has to be added precisely in the classes list of the program node. Therefore, we have to omit
+            // these types of nodes.
             if (instructionNode.getToken().getTokenType().equals(PROGRAM) &&
                 !currentNode.getToken().getTokenType().equals(CLASS_DECLARATION)
             ) {
                 assert instructionNode instanceof ProgramNode;
                 Node lastClassNode = ((ProgramNode) instructionNode).getLastClass();
                 assert lastClassNode instanceof ClassNode;
+                // If we have a method declaration, we have to add it in the ClassNode, since all methods, in Java, are inside a class.
                 if (currentNode.getToken().getTokenType().equals(METHOD_DECLARATION)) {
                     lastClassNode.addNode(currentNode);
                 } else {
+                    // If we have any other type of instructions, they are to be added in the SubprogramNode, since all the instructions in Java
+                    // have to reside inside a method.
                     Node lastSubprogramNode = ((ClassNode) lastClassNode).getLastSubprogram();
                     lastSubprogramNode.addNode(currentNode);
                 }
             } else {
+                // In any other situation, we just add the node, letting each particular type of Node decide the way the nodes will be added.
                 instructionNode.addNode(currentNode);
             }
 
+            // The adding of nodes is done in a recursive-like manner. We take the instruction node, we "enrich" it with the current node
+            // that was extracted from the ParsingContext and the instruction node becomes the currentNode.
+            // The instructionNode is a general reference to the current instruction that is being built. However, all the nodes that are to be added
+            // somehow depend on the current node. Therefore, we have to aggregate these nodes together. So, we assign the currentNode to the
+            // instructionNode.
             instructionNode = currentNode;
             if (!currentNode.getToken().getTokenType().equals(PROGRAM)) {
                 nodeIterator.remove();
