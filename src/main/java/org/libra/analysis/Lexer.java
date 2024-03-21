@@ -46,8 +46,11 @@ public class Lexer {
     private List<Token> tokenize(List<String> keywords) {
         List<Token> tokens = new ArrayList<>();
         TokenPremises tokenPremises = TokenPremises.builder()
-            .isMethodDeclaration(keywords.contains(OPEN_CURLY_BRACE_LITERAL) && !keywords.contains(SEMICOLON_LITERAL))
-            .build();
+            .isClassDeclaration(keywords.contains(CLASS_LITERAL))
+            .isMethodDeclaration(!keywords.contains(CLASS_LITERAL) &&
+                keywords.contains(OPEN_CURLY_BRACE_LITERAL) &&
+                !keywords.contains(SEMICOLON_LITERAL)
+            ).build();
         Token programToken = tokenFactory.createProgramToken();
         if (programToken != null) {
             tokens.add(programToken);
@@ -57,7 +60,9 @@ public class Lexer {
             String keyword = keywords.get(i);
             adjustTokenPremises(tokenPremises, keywords, i, tokens);
             Token token = tokenFactory.produceToken(keyword, i, tokenPremises);
-            tokens.add(token);
+            if (token != null) {
+                tokens.add(token);
+            }
         }
 
         return tokens;
@@ -79,7 +84,7 @@ public class Lexer {
         tokenPremises.setAssignmentNextKeyword(nextKeyword.equals(ASSIGNMENT_LITERAL));
 
         // If the previous token is of METHOD_DECLARATION type, we have to mark that we are about to analyze the signature of the method.
-        // Also, we start indexing each keyword that represents the method signature to determine which keyword is the data type and which is the
+        // Also, we start indexing each keyword that represents the method signature to determine which keyword is the data type and which is
         // the name of the variable (since we have DATA_TYPE VARIABLE_NAME, DATA_TYPE VARIABLE_NAME...).
         // If the previous token is a comma, we have to reset the index that points to the current keyword from the method
         // declaration. Resetting it means to initialize it as being 1.

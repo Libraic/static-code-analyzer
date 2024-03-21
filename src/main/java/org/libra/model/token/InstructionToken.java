@@ -2,6 +2,7 @@ package org.libra.model.token;
 
 import lombok.EqualsAndHashCode;
 import org.libra.model.ParsingContext;
+import org.libra.model.node.ClassNode;
 import org.libra.model.node.Node;
 import org.libra.model.node.ProgramNode;
 import org.libra.model.node.UnaryNode;
@@ -9,6 +10,7 @@ import org.libra.service.ArithmeticService;
 
 import java.util.Iterator;
 
+import static org.libra.model.token.TokenType.CLASS_DECLARATION;
 import static org.libra.model.token.TokenType.METHOD_DECLARATION;
 import static org.libra.model.token.TokenType.PROGRAM;
 import static org.libra.utils.Constants.CLOSED_PARENTHESES_LITERAL;
@@ -58,13 +60,18 @@ public class InstructionToken extends Token {
                 continue;
             }
 
-            if (instructionNode.getToken().getTokenType().equals(PROGRAM)
-                && !currentNode.getToken().getTokenType().equals(METHOD_DECLARATION)
+            if (instructionNode.getToken().getTokenType().equals(PROGRAM) &&
+                !currentNode.getToken().getTokenType().equals(CLASS_DECLARATION)
             ) {
                 assert instructionNode instanceof ProgramNode;
-                Node subprogramNode = ((ProgramNode) instructionNode).getLastSubprogram();
-                subprogramNode.addNode(currentNode);
-
+                Node lastClassNode = ((ProgramNode) instructionNode).getLastClass();
+                assert lastClassNode instanceof ClassNode;
+                if (currentNode.getToken().getTokenType().equals(METHOD_DECLARATION)) {
+                    lastClassNode.addNode(currentNode);
+                } else {
+                    Node lastSubprogramNode = ((ClassNode) lastClassNode).getLastSubprogram();
+                    lastSubprogramNode.addNode(currentNode);
+                }
             } else {
                 instructionNode.addNode(currentNode);
             }

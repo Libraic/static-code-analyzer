@@ -5,6 +5,7 @@ import org.libra.model.AccessModifier;
 import org.libra.model.Membership;
 import org.libra.model.ParsingContext;
 import org.libra.model.State;
+import org.libra.model.node.ClassNode;
 import org.libra.model.node.Node;
 import org.libra.model.node.SubprogramNode;
 import org.libra.model.node.UnaryNode;
@@ -14,8 +15,10 @@ import java.util.Iterator;
 import static org.libra.model.AccessModifier.PACKAGE_PRIVATE;
 import static org.libra.model.Membership.CLASS;
 import static org.libra.model.Membership.OBJECT;
+import static org.libra.model.State.INHERITABLE;
 import static org.libra.model.State.OVERRIDABLE;
 import static org.libra.model.token.TokenType.ACCESS_MODIFIER;
+import static org.libra.model.token.TokenType.CLASS_DECLARATION;
 import static org.libra.model.token.TokenType.METHOD_DECLARATION;
 import static org.libra.model.token.TokenType.PROGRAM;
 import static org.libra.model.token.TokenType.RETURN_TYPE;
@@ -31,11 +34,40 @@ public class EntityNameToken extends Token {
 
     @Override
     public void produceNode(ParsingContext parsingContext) {
-        if (tokenType.equals(METHOD_DECLARATION)) {
+        if (tokenType.equals(CLASS_DECLARATION)) {
+            addClassNodeInParsingContext(parsingContext);
+        } else if (tokenType.equals(METHOD_DECLARATION)) {
             addSubprogramNodeInParsingContext(parsingContext);
         } else {
             addVariableNodeInParsingContext(parsingContext);
         }
+    }
+
+    private void addClassNodeInParsingContext(ParsingContext parsingContext) {
+        AccessModifier accessModifier = PACKAGE_PRIVATE;
+        State state = INHERITABLE;
+        String className = (String) value;
+        Iterator<Node> nodeIterator = parsingContext.getNodesIterator();
+
+        while (nodeIterator.hasNext()) {
+            Node currentNode = nodeIterator.next();
+            Object value = currentNode.getToken().getValue();
+            TokenType tokenType = currentNode.getToken().getTokenType();
+            if (tokenType.equals(PROGRAM)) {
+                continue;
+            } else if (tokenType.equals(ACCESS_MODIFIER)) {
+                accessModifier = AccessModifier.createAccessModifier((String) value);
+            } else if (tokenType.equals(STATE)) {
+                state = State.createState((String) value);
+            } else if (tokenType.equals(TokenType.CLASS)) {
+                break;
+            }
+
+            nodeIterator.remove();
+        }
+
+        Node classNode = new ClassNode(this, className, accessModifier, state);
+        parsingContext.addNode(classNode);
     }
 
     private void addSubprogramNodeInParsingContext(ParsingContext parsingContext) {
@@ -50,7 +82,7 @@ public class EntityNameToken extends Token {
             Node currentNode = nodeIterator.next();
             Object value = currentNode.getToken().getValue();
             TokenType tokenType = currentNode.getToken().getTokenType();
-            if (tokenType.equals(PROGRAM)) {
+            if (tokenType.equals(PROGRAM) || tokenType.equals(TokenType.CLASS)) {
                 continue;
             } else if (tokenType.equals(ACCESS_MODIFIER)) {
                 accessModifier = AccessModifier.createAccessModifier((String) value);

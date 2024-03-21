@@ -47,6 +47,16 @@ public class TokenPremises {
     private boolean isNextKeywordOpenParenthesis;
 
     /**
+     * A flag that indicates if a class is being declared.
+     */
+    private boolean isClassDeclaration;
+
+    /**
+     * A flag that indicates that <em>class</em> keyword was found.
+     */
+    private boolean wasClassKeywordFound;
+
+    /**
      * Utility method to increment the index that points to the current position inside the signature of the method.
      */
     public void incrementMethodSignatureCurrentPosition() {

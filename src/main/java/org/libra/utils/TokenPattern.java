@@ -21,7 +21,8 @@ public enum TokenPattern {
     STATIC_ACCESS_PATTERN("^static$"),
     FINAL_PATTERN("^final$"),
     PARENTHESES_PATTERN("^(\\(|\\))$"),
-    SEPARATOR_PATTERN("^,$");
+    SEPARATOR_PATTERN("^,$"),
+    CLASS_DECLARATION("^class$");
 
     private final String regex;
 }

@@ -4,3 +4,15 @@ int c = x + y + 5;
 int d = x + 2 * y;
 
 public static void main(String args) { }
+
+public static final void doSomeArithmetic(Integer number, Integer factor) {
+    number = (2 * ((3 + 4) * 5)) - 2;
+    factor = 2 + 3;
+}
+
+class MyClass {
+  public static final void doSomeArithmetic(Integer number, Integer factor) {
+      number = (2 * ((3 + 4) * 5)) - 2;
+      factor = 2 + 3;
+  }
+}

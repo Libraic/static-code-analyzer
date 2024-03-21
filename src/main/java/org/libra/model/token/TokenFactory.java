@@ -2,10 +2,12 @@ package org.libra.model.token;
 
 import org.libra.exception.ExceptionGenerator;
 import org.libra.model.TokenPremises;
+import org.libra.utils.TokenPattern;
 
 import static org.libra.exception.ExceptionType.UNEXPECTED_TOKEN_EXCEPTION;
 import static org.libra.model.token.TokenType.*;
 import static org.libra.model.token.TokenType.ASSIGNMENT_OPERATOR;
+import static org.libra.model.token.TokenType.CLASS_DECLARATION;
 import static org.libra.utils.Constants.*;
 import static org.libra.utils.TokenPattern.*;
 
@@ -30,7 +32,12 @@ public class TokenFactory {
         int keywordIndex,
         TokenPremises tokenPremises
     ) {
-        if (isAccessModifier(keyword)) {
+        if (isClassDeclaration(keyword)) {
+            tokenPremises.setWasClassKeywordFound(true);
+            return null;
+        } else if (isClassName(keyword, tokenPremises)) {
+            return new EntityNameToken(CLASS_DECLARATION, keyword);
+        } else if (isAccessModifier(keyword)) {
             return new StandaloneToken(ACCESS_MODIFIER, keyword);
         } else if (isStaticAccess(keyword)) {
             return new StandaloneToken(STATIC_ACCESS, keyword);
@@ -56,9 +63,15 @@ public class TokenFactory {
             return new StandaloneToken(STRING, keyword);
         } else if (isSeparator(keyword)) {
             return new SpecialSymbolToken(COMMA_SEPARATOR, keyword);
-        } else if (isInstructionOrSubprogram(keyword)) {
+        } else if (isInstructionOrSubprogramOrClass(keyword)) {
+            TokenType tokenType = METHOD;
+            if (tokenPremises.isClassDeclaration()) {
+                tokenType = CLASS;
+            } else if (keyword.equals(SEMICOLON_LITERAL)) {
+                tokenType = INSTRUCTION;
+            }
             return new InstructionToken(
-                keyword.equals(SEMICOLON_LITERAL) ? INSTRUCTION : METHOD,
+                tokenType,
                 keyword
             );
         } else {
@@ -113,6 +126,16 @@ public class TokenFactory {
             && keyword.matches(ENTITY_NAME_PATTERN.getRegex());
     }
 
+    private boolean isClassName(String keyword, TokenPremises tokenPremises) {
+        return tokenPremises.isClassDeclaration()
+            && keyword.matches(ENTITY_NAME_PATTERN.getRegex())
+            && tokenPremises.isWasClassKeywordFound();
+    }
+
+    private boolean isClassDeclaration(String keyword) {
+        return keyword.matches(TokenPattern.CLASS_DECLARATION.getRegex());
+    }
+
     private boolean isAccessModifier(String keyword) {
         return keyword.matches(ACCESS_MODIFIER_PATTERN.getRegex());
     }
@@ -121,7 +144,7 @@ public class TokenFactory {
         return keyword.matches(STRING_PATTERN.getRegex());
     }
 
-    private boolean isInstructionOrSubprogram(String keyword) {
+    private boolean isInstructionOrSubprogramOrClass(String keyword) {
         return keyword.matches(INSTRUCTION_SUBPROGRAM_PATTERN.getRegex());
     }
 
