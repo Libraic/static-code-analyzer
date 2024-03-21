@@ -15,3 +15,17 @@ itself is written in Java as well.
 You can check [GRAMMAR.md](https://github.com/Libraic/static-code-analyzer/blob/master/GRAMMAR.md) and 
 [CONSIDERATIONS.md](https://github.com/Libraic/static-code-analyzer/blob/master/CONSIDERATIONS.md) markdown files to get in 
 touch with the premises this analyzer is build on.
+
+### The list of Java constructions the Static Code Analyzer should support (including the constructions it already supports)
+
+- [x] Classes
+- [x] Methods
+- [x] Arithmetic Instruction
+- [ ] Complex Instructions, involving methods calls
+- [x] Static Access
+- [x] Finals
+- [ ] Multi-classes
+- 
+> [!NOTE]  
+> This Static Code Analyzer assumes the Java program was properly compiled and does include any syntactic errors. It does not
+> check or take responsibility for invalid Java code.
