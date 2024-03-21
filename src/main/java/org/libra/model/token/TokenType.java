@@ -20,5 +20,7 @@ public enum TokenType {
     RETURN_TYPE,
     METHOD_DECLARATION,
     COMMA_SEPARATOR,
+    CLASS,
+    CLASS_DECLARATION,
     UNDEFINED
 }

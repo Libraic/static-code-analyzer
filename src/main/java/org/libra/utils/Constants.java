@@ -34,6 +34,7 @@ public class Constants {
     public static final String PROGRAM_BODY_KEYWORD = "Program Body";
     public static final String INSTRUCTION_BODY_KEYWORD = "Instruction Body";
     public static final String INSTRUCTION_LITERAL = "\tInstruction ";
+    public static final String CLASS_INDICATOR = "\tClass ";
     public static final String SUBPROGRAM_LITERAL = "\tSubprogram ";
     public static final String DATA_TYPE_KEYWORD = "Data Type";
     public static final String JSON_OBJECT_START = ": {";
@@ -48,6 +49,7 @@ public class Constants {
     public static final String OPEN_CURLY_BRACE_LITERAL = "{";
     public static final String COMMA_LITERAL = ",";
     public static final String EMPTY_STRING = "";
+    public static final String CLASS_LITERAL = "class";
 
     /**
      * <em><strong>int</strong></em> data type constants.
